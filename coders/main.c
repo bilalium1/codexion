@@ -1,0 +1,47 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/17 08:28:01 by blemrabe          #+#    #+#             */
+/*   Updated: 2026/04/17 09:18:49 by blemrabe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "coders.h"
+
+/*
+This file has the main program, this program uses all the other files
+to run the program.
+*/
+
+void	display_parsed(int *info)
+{
+	int		i;
+	char	**args;
+
+	args = (char *[]){"number_coders", "time_to_burnout", "time_to_compile",
+		"time_to_debug", "time_to_refactor", "number_of_compiles_required",
+		"dongle_cooldown", "edf", "fifo"};
+	i = 0;
+	while (i < 7)
+	{
+		printf("[-//] %s : %d\n", args[i], info[i]);
+		i++;
+	}
+	printf("[-//] scheduler : %s\n\n", args[7 + info[i]]);
+}
+
+int	main(int ac, char **av)
+{
+	int	*parse_info;
+
+	printf("\n[+//] WELCOME TO CODEXION\n\n");
+	parse_info = parser(ac, av);
+	if (!parse_info)
+		return (printf("[x//] Wrong Format : Try again."), 0);
+
+	display_parsed(parse_info);
+}

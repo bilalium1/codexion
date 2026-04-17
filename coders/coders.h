@@ -1,23 +1,24 @@
-#ifndef CODEXION_H
-#define CODEXION_H
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   coders.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/17 08:31:20 by blemrabe          #+#    #+#             */
+/*   Updated: 2026/04/17 08:44:33 by blemrabe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <pthread.h>
+#ifndef CODERS_H
+# define CODERS_H
 
-typedef struct parse_s
-{
-    int nb_coders;
-    int burnout;
-    int compile;
-    int debug;
-    int refactor;
-    int cmp_req;
-    int cooldown;
-    int scheduler;
-}   parse_t;
+# include <stdlib.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <pthread.h>
+# include <string.h>
 
-int* parser(int ac, char **av);
+int	*parser(int ac, char **av);
 
-#endif CODEXION_H
+#endif
