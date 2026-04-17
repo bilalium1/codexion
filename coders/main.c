@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:28:01 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/17 09:18:49 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/17 09:45:00 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ This file has the main program, this program uses all the other files
 to run the program.
 */
 
-void	display_parsed(int *info)
+static void	display_parsed(int *info)
 {
 	int		i;
 	char	**args;

@@ -6,13 +6,13 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:30:36 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/17 09:24:16 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/17 09:35:09 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "coders.h"
 
-int	is_digit(char *str)
+static int	is_digit(char *str)
 {
 	while (*str)
 	{
