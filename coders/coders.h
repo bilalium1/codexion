@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:31:20 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/17 10:04:36 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/17 18:11:06 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,6 @@ typedef struct s_sim
 }	t_sim;
 
 int	*parser(int ac, char **av);
+void *coder_routine(void *arg);
 
 #endif

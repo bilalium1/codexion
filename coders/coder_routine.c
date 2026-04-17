@@ -6,8 +6,13 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:52 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/17 10:48:01 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/17 18:10:31 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "coders.h"
+
+void *coder_routine(void *arg)
+{
+    
+}
