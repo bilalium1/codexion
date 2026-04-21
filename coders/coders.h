@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:31:20 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/17 18:11:06 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/21 12:29:24 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <unistd.h>
 # include <pthread.h>
 # include <string.h>
+# include <sys/time.h>
 
 # define NBR_CDRS	0
 # define TT_BRNT	1
@@ -49,6 +50,7 @@ typedef struct s_sim
 {
 	int				*data;
 	int				stop;
+	long			start_time;
 
 	pthread_mutex_t	log_mutex;
 	pthread_mutex_t	stop_mutex;
@@ -57,7 +59,13 @@ typedef struct s_sim
 	t_coder			*coders;
 }	t_sim;
 
-int	*parser(int ac, char **av);
-void *coder_routine(void *arg);
+int		*parser(int ac, char **av);
+int		init_codex(t_sim *sim, int *info);
+void	*coder_routine(void *arg);
+
+int		is_stopped(t_sim *sim);
+long	get_time(void);
+void	ft_sleep(long duration, t_sim *sim);
+void	log_action(t_sim *sim, int id, char *msg);
 
 #endif
