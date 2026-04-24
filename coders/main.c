@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:28:01 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/21 05:51:39 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/24 16:05:49 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,20 @@ int	main(int ac, char **av)
 	t_sim	sim;
 
 	printf("\n[+//] WELCOME TO CODEXION\n\n");
+
 	parse_info = parser(ac, av);
 	if (!parse_info)
 		return (printf("[x//] Wrong Format : Try again."), 0);
 
 	display_parsed(parse_info);
 	sim.data = parse_info;
-	printf("%d\n", sim.data[NBR_CDRS]);
+
+	if (init_codex(&sim) == 0)
+		return (printf("[x//] Init Failed. \n"), 1);
+
+	monitor_routine(&sim);
+	cleanup(&sim);
+
+	free(parse_info);
+	return (0);
 }

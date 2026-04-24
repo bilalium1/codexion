@@ -6,42 +6,26 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:52 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/21 15:17:15 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/24 16:22:57 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "coders.h"
-
-static int	take_dongles(t_coder *cdr)
-{
-	pthread_mutex_lock(&cdr->left->mutex);
-	if (is_stopped(cdr->sim))
-	{
-		pthread_mutex_unlock(&cdr->left->mutex);
-		return (0);
-	}
-	pthread_mutex_lock(&cdr->right->mutex);
-	if (is_stopped(cdr->sim))
-	{
-		pthread_mutex_unlock(&cdr->right->mutex);
-		pthread_mutex_unlock(&cdr->left->mutex);
-		return (0);
-	}
-	return (1);
-}
+#include <pthread.h>
 
 static void	compile(t_coder *cdr)
 {
+	pthread_mutex_lock(&cdr->cmutex);
 	cdr->last_compile = get_time();
 	cdr->compile_count++;
+	pthread_mutex_unlock(&cdr->cmutex);
 	log_action(cdr->sim, cdr->id, "is compiling...");
 	ft_sleep(cdr->sim->data[TT_CMPL], cdr->sim);
+	cool_dongles(cdr);
 }
 
 static void	post_compile(t_coder *cdr)
 {
-	pthread_mutex_unlock(&cdr->left->mutex);
-	pthread_mutex_unlock(&cdr->right->mutex);
 	log_action(cdr->sim, cdr->id, "is debugging");
 	ft_sleep(cdr->sim->data[TT_DEBG], cdr->sim);
 	log_action(cdr->sim, cdr->id, "is refactoring");

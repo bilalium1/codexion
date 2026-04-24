@@ -6,13 +6,14 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:06 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/21 12:24:41 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/24 16:21:59 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "coders.h"
 #include <pthread.h>
 #include <string.h>
+#include <unistd.h>
 
 static int	init_dongles(t_sim *sim, int n)
 {
@@ -35,23 +36,26 @@ static int	init_coders(t_sim *sim, int n)
 	i = 0;
 	while (i < n)
 	{
+		if (i % 2 == 0)
+			usleep(500);
 		sim->coders[i].id = i;
 		sim->coders[i].compile_count = 0;
-		sim->coders[i].last_compile = 0;
+		sim->coders[i].last_compile = sim->start_time;
 		sim->coders[i].sim = sim;
 		sim->coders[i].left = &sim->dongles[i];
 		sim->coders[i].right = &sim->dongles[(i + 1) % n];
+		pthread_mutex_init(&sim->coders[i].cmutex, NULL);
 		i++;
 	}
 	return (1);
 }
 
-int	init_codex(t_sim *sim, int *info)
+int	init_codex(t_sim *sim)
 {
 	int	n;
 	int	i;
 
-	n = info[NBR_CDRS];
+	n = sim->data[NBR_CDRS];
 	sim->coders = malloc(n * sizeof(t_coder));
 	sim->dongles = malloc(n * sizeof(t_dongle));
 	if (!sim->coders || !sim->dongles)
@@ -59,7 +63,6 @@ int	init_codex(t_sim *sim, int *info)
 	pthread_mutex_init(&sim->log_mutex, NULL);
 	pthread_mutex_init(&sim->stop_mutex, NULL);
 	sim->start_time = get_time();
-	sim->data = info;
 	sim->stop = 0;
 	init_dongles(sim, n);
 	init_coders(sim, n);

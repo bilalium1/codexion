@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:31:20 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/22 14:38:07 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/24 16:31:57 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,10 @@ typedef struct s_dongle
 typedef struct s_coder
 {
 	int				id;
-	pthread_t		thread;
-	long			last_compile;
 	int				compile_count;
+	long			last_compile;
+	pthread_mutex_t	cmutex;
+	pthread_t		thread;
 	t_dongle		*left;
 	t_dongle		*right;
 	struct s_sim	*sim;
@@ -60,8 +61,12 @@ typedef struct s_sim
 }	t_sim;
 
 int		*parser(int ac, char **av);
-int		init_codex(t_sim *sim, int *info);
+int		init_codex(t_sim *sim);
+int		take_dongles(t_coder *cdr);
 void	*coder_routine(void *arg);
+void	*monitor_routine(void *arg);
+void	cleanup(t_sim *sim);
+void	cool_dongles(t_coder *cdr);
 
 int		is_stopped(t_sim *sim);
 long	get_time(void);
