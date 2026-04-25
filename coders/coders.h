@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:31:20 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/24 16:31:57 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/25 12:16:21 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,30 @@
 # define CLDOWN		6
 # define SCH		7
 
+# define MAX_CDRS	256
+
+/*
+** t_waiter: one entry in a dongle's priority queue.
+** Only a scheduling key — NO per-waiter cond_t.
+** All waiters sleep on the single d->cond instead.
+*/
+typedef struct s_waiter
+{
+	long	key;
+}	t_waiter;
+
+/*
+** t_dongle: owns ONE condition variable shared by all its waiters.
+** When released, broadcast wakes everyone; each re-checks the heap.
+*/
 typedef struct s_dongle
 {
 	pthread_mutex_t	mutex;
+	pthread_cond_t	cond;
+	int				in_use;
 	long			available_at;
+	t_waiter		queue[MAX_CDRS];
+	int				size;
 }	t_dongle;
 
 typedef struct s_coder
@@ -60,14 +80,28 @@ typedef struct s_sim
 	t_coder			*coders;
 }	t_sim;
 
+/* parser / init / cleanup */
 int		*parser(int ac, char **av);
 int		init_codex(t_sim *sim);
-int		take_dongles(t_coder *cdr);
-void	*coder_routine(void *arg);
-void	*monitor_routine(void *arg);
 void	cleanup(t_sim *sim);
+
+/* heap */
+void	heap_push(t_dongle *d, t_waiter *w);
+void	heap_pop(t_dongle *d);
+void	heap_push_at(t_dongle *d, int i);
+
+/* scheduler */
+int		acquire_dongle(t_dongle *d, t_coder *cdr);
+
+/* dongle */
+int		take_dongles(t_coder *cdr);
 void	cool_dongles(t_coder *cdr);
 
+/* threads */
+void	*coder_routine(void *arg);
+void	*monitor_routine(void *arg);
+
+/* utils */
 int		is_stopped(t_sim *sim);
 long	get_time(void);
 void	ft_sleep(long duration, t_sim *sim);

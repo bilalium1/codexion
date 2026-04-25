@@ -6,69 +6,47 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:31 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/24 15:23:25 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/25 12:12:37 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "coders.h"
 
-static void	wait_for_dongle(t_dongle *dongle, t_sim *sim)
+static void	release_dongle(t_dongle *d, int cooldown)
 {
-	while (!is_stopped(sim))
-	{
-		if (get_time() >= dongle->available_at)
-			break ;
-		usleep(500);
-	}
-}
-
-static int	take_dongles_even(t_coder *cdr)
-{
-	pthread_mutex_lock(&cdr->left->mutex);
-	if (is_stopped(cdr->sim))
-		return (pthread_mutex_unlock(&cdr->left->mutex), 0);
-	wait_for_dongle(cdr->left, cdr->sim);
-	pthread_mutex_lock(&cdr->right->mutex);
-	if (is_stopped(cdr->sim))
-	{
-		pthread_mutex_unlock(&cdr->right->mutex);
-		pthread_mutex_unlock(&cdr->left->mutex);
-		return (0);
-	}
-	wait_for_dongle(cdr->right, cdr->sim);
-	return (1);
-}
-
-static int	take_dongles_odd(t_coder *cdr)
-{
-	pthread_mutex_lock(&cdr->right->mutex);
-	if (is_stopped(cdr->sim))
-		return (pthread_mutex_unlock(&cdr->right->mutex), 0);
-	wait_for_dongle(cdr->right, cdr->sim);
-	pthread_mutex_lock(&cdr->left->mutex);
-	if (is_stopped(cdr->sim))
-	{
-		pthread_mutex_unlock(&cdr->left->mutex);
-		pthread_mutex_unlock(&cdr->right->mutex);
-		return (0);
-	}
-	wait_for_dongle(cdr->left, cdr->sim);
-	return (1);
+	d->in_use = 0;
+	d->available_at = get_time() + cooldown;
+	pthread_cond_broadcast(&d->cond);
+	pthread_mutex_unlock(&d->mutex);
 }
 
 int	take_dongles(t_coder *cdr)
 {
-	int	res;
+	t_dongle	*first;
+	t_dongle	*second;
 
 	if (cdr->id % 2 == 0)
-		res = take_dongles_even(cdr);
-	else
-		res = take_dongles_odd(cdr);
-	if (res)
 	{
-		log_action(cdr->sim, cdr->id, "has taken two dongles");
+		first = cdr->left;
+		second = cdr->right;
 	}
-	return (res);
+	else
+	{
+		first = cdr->right;
+		second = cdr->left;
+	}
+	if (!acquire_dongle(first, cdr))
+		return (0);
+	log_action(cdr->sim, cdr->id, "has taken a dongle");
+	pthread_mutex_unlock(&first->mutex);
+	if (!acquire_dongle(second, cdr))
+	{
+		pthread_mutex_lock(&first->mutex);
+		release_dongle(first, cdr->sim->data[CLDOWN]);
+		return (0);
+	}
+	log_action(cdr->sim, cdr->id, "has taken a dongle");
+	return (pthread_mutex_unlock(&second->mutex), 1);
 }
 
 void	cool_dongles(t_coder *cdr)
@@ -78,16 +56,16 @@ void	cool_dongles(t_coder *cdr)
 	cooldown = cdr->sim->data[CLDOWN];
 	if (cdr->id % 2 == 0)
 	{
-		cdr->right->available_at = get_time() + cooldown;
-		pthread_mutex_unlock(&cdr->right->mutex);
-		cdr->left->available_at = get_time() + cooldown;
-		pthread_mutex_unlock(&cdr->left->mutex);
+		pthread_mutex_lock(&cdr->right->mutex);
+		release_dongle(cdr->right, cooldown);
+		pthread_mutex_lock(&cdr->left->mutex);
+		release_dongle(cdr->left, cooldown);
 	}
 	else
 	{
-		cdr->left->available_at = get_time() + cooldown;
-		pthread_mutex_unlock(&cdr->left->mutex);
-		cdr->right->available_at = get_time() + cooldown;
-		pthread_mutex_unlock(&cdr->right->mutex);
+		pthread_mutex_lock(&cdr->left->mutex);
+		release_dongle(cdr->left, cooldown);
+		pthread_mutex_lock(&cdr->right->mutex);
+		release_dongle(cdr->right, cooldown);
 	}
 }

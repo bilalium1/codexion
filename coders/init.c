@@ -6,14 +6,11 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:06 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/24 16:21:59 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/25 12:15:49 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "coders.h"
-#include <pthread.h>
-#include <string.h>
-#include <unistd.h>
 
 static int	init_dongles(t_sim *sim, int n)
 {
@@ -23,7 +20,10 @@ static int	init_dongles(t_sim *sim, int n)
 	while (i < n)
 	{
 		pthread_mutex_init(&sim->dongles[i].mutex, NULL);
+		pthread_cond_init(&sim->dongles[i].cond, NULL);
 		sim->dongles[i].available_at = 0;
+		sim->dongles[i].in_use = 0;
+		sim->dongles[i].size = 0;
 		i++;
 	}
 	return (1);
@@ -70,8 +70,7 @@ int	init_codex(t_sim *sim)
 	while (i < n)
 	{
 		pthread_create(&sim->coders[i].thread, NULL,
-			coder_routine,
-			&sim->coders[i]);
+			coder_routine, &sim->coders[i]);
 		i++;
 	}
 	return (1);
