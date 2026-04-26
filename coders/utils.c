@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:46:50 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/21 15:05:34 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/26 12:59:10 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,6 @@ void	ft_sleep(long duration, t_sim *sim)
 void	log_action(t_sim *sim, int id, char *msg)
 {
 	pthread_mutex_lock(&sim->log_mutex);
-	printf("%ld %d %s\n", get_time() - sim->start_time, id + 1, msg);
+	printf("%ld %d %s\033[0m\n", get_time() - sim->st, id + 1, msg);
 	pthread_mutex_unlock(&sim->log_mutex);
 }

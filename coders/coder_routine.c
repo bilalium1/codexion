@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:52 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/26 11:43:36 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/26 12:50:35 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static void	compile(t_coder *cdr)
 	cdr->last_compile = get_time();
 	cdr->compile_count++;
 	pthread_mutex_unlock(&cdr->cmutex);
-	log_action(cdr->sim, cdr->id, "is compiling...");
+	log_action(cdr->sim, cdr->id, "is compiling");
 	ft_sleep(cdr->sim->data[TT_CMPL], cdr->sim);
 	cool_dongles(cdr);
 }

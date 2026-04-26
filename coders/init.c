@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:06 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/26 12:37:47 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/26 13:07:52 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static int	init_coders(t_sim *sim, int n)
 			usleep(500);
 		sim->coders[i].id = i;
 		sim->coders[i].compile_count = 0;
-		sim->coders[i].last_compile = sim->start_time;
+		sim->coders[i].last_compile = sim->st;
 		sim->coders[i].sim = sim;
 		sim->coders[i].left = &sim->dongles[i];
 		sim->coders[i].right = &sim->dongles[(i + 1) % n];
@@ -62,7 +62,7 @@ int	init_codex(t_sim *sim)
 		return (0);
 	pthread_mutex_init(&sim->log_mutex, NULL);
 	pthread_mutex_init(&sim->stop_mutex, NULL);
-	sim->start_time = get_time();
+	sim->st = get_time();
 	sim->stop = 0;
 	init_dongles(sim, n);
 	init_coders(sim, n);

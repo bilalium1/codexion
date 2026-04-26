@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:31:20 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/26 12:34:12 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/26 13:01:48 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ typedef struct s_sim
 {
 	int				*data;
 	int				stop;
-	long			start_time;
+	long			st;
 	pthread_mutex_t	log_mutex;
 	pthread_mutex_t	stop_mutex;
 	t_dongle		*dongles;
