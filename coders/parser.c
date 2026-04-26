@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:30:36 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/17 09:35:09 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/26 12:09:14 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ int	*parser(int ac, char **av)
 
 	if (ac != 9)
 		return (NULL);
-
 	i = 1;
 	while (i < ac - 1)
 	{
@@ -40,7 +39,6 @@ int	*parser(int ac, char **av)
 	}
 	if (strcmp(av[8], "fifo") && strcmp(av[8], "edf"))
 		return (NULL);
-
 	parsed = malloc(32);
 	i = 0;
 	while (i < 7)
@@ -48,6 +46,8 @@ int	*parser(int ac, char **av)
 		parsed[i] = atoi(av[i + 1]);
 		i++;
 	}
+	if (parsed[5] == 0 || parsed[0] == 0)
+		return (0);
 	parsed[7] = strcmp(av[8], "edf");
 	return (parsed);
 }

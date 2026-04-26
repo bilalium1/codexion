@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:52 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/24 16:22:57 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/26 11:43:36 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,9 @@ void	*coder_routine(void *arg)
 	t_coder	*cdr;
 
 	cdr = (t_coder *)arg;
+	pthread_mutex_lock(&cdr->cmutex);
+	cdr->last_compile = get_time();
+	pthread_mutex_unlock(&cdr->cmutex);
 	if (cdr->sim->data[NBR_CDRS] == 1)
 		return (handle_single(cdr));
 	while (!is_stopped(cdr->sim))

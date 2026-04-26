@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:06 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/25 12:15:49 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/26 12:37:47 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,5 +73,6 @@ int	init_codex(t_sim *sim)
 			coder_routine, &sim->coders[i]);
 		i++;
 	}
+	usleep(1000);
 	return (1);
 }

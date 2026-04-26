@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:31:20 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/25 12:16:21 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/26 12:34:12 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,20 +31,11 @@
 
 # define MAX_CDRS	256
 
-/*
-** t_waiter: one entry in a dongle's priority queue.
-** Only a scheduling key — NO per-waiter cond_t.
-** All waiters sleep on the single d->cond instead.
-*/
 typedef struct s_waiter
 {
 	long	key;
 }	t_waiter;
 
-/*
-** t_dongle: owns ONE condition variable shared by all its waiters.
-** When released, broadcast wakes everyone; each re-checks the heap.
-*/
 typedef struct s_dongle
 {
 	pthread_mutex_t	mutex;
@@ -72,10 +63,8 @@ typedef struct s_sim
 	int				*data;
 	int				stop;
 	long			start_time;
-
 	pthread_mutex_t	log_mutex;
 	pthread_mutex_t	stop_mutex;
-
 	t_dongle		*dongles;
 	t_coder			*coders;
 }	t_sim;
@@ -91,7 +80,8 @@ void	heap_pop(t_dongle *d);
 void	heap_push_at(t_dongle *d, int i);
 
 /* scheduler */
-int		acquire_dongle(t_dongle *d, t_coder *cdr);
+long	get_key(t_coder *cdr);
+int		acquire_dongle(t_dongle *d, t_coder *cdr, long key);
 
 /* dongle */
 int		take_dongles(t_coder *cdr);

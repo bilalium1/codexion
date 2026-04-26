@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:46:14 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/24 16:28:37 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/26 12:12:28 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 static int	all_complete(t_sim	*sim)
 {
 	int	i;
-	int count;
+	int	count;
 
 	i = 0;
 	while (i < sim->data[NBR_CDRS])
@@ -33,16 +33,28 @@ static int	all_complete(t_sim	*sim)
 
 static void	set_stop(t_sim *sim, int value)
 {
+	int	n;
+	int	i;
+
 	pthread_mutex_lock(&sim->stop_mutex);
 	sim->stop = value;
 	pthread_mutex_unlock(&sim->stop_mutex);
+	n = sim->data[NBR_CDRS];
+	i = 0;
+	while (i < n)
+	{
+		pthread_mutex_lock(&sim->dongles[i].mutex);
+		pthread_cond_broadcast(&sim->dongles[i].cond);
+		pthread_mutex_unlock(&sim->dongles[i].mutex);
+		i++;
+	}
 }
 
 void	*monitor_routine(void *arg)
 {
 	t_sim	*sim;
 	int		i;
-	int		last_comp;
+	long	last_comp;
 
 	sim = (t_sim *)arg;
 	while (1)
