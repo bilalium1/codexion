@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:28:01 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/26 13:06:47 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/30 15:57:17 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,11 @@ int	main(int ac, char **av)
 	char	*format;
 
 	format = "[i>0] [i>=0] [i>=0] [i>=0] [i>=0] [i>0] [i>=0] [edf-fifo]";
-	printf("\n[+//] WELCOME TO CODEXION\n\n");
+	//printf("\n[+//] WELCOME TO CODEXION\n\n");
 	parse_info = parser(ac, av);
 	if (!parse_info)
 		return (printf("[x//] Wrong Format!\n[%%//] %s\n", format), 0);
-	display_parsed(parse_info);
+	//display_parsed(parse_info);
 	sim.data = parse_info;
 	if (init_codex(&sim) == 0)
 		return (printf("[x//] Init Failed. \n"), 1);

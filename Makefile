@@ -5,7 +5,7 @@ CFLAGS= -Wall -Wextra -Werror
 all : $(NAME)
 
 $(NAME): $(SRCS)
-	$(CC) $^ $(CFLAGS) -pthread -o $@
+	$(CC) $^  -pthread -o $@
 
 clean :
 	rm $(NAME)

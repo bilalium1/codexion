@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:31:20 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/26 13:01:48 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/04/30 16:01:24 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ typedef struct s_dongle
 	pthread_cond_t	cond;
 	int				in_use;
 	long			available_at;
-	t_waiter		queue[MAX_CDRS];
+	t_waiter		queue[2];
 	int				size;
 }	t_dongle;
 
@@ -60,9 +60,9 @@ typedef struct s_coder
 
 typedef struct s_sim
 {
-	int				*data;
-	int				stop;
-	long			st;
+	int				*data; //array parsing
+	int				stop;	//stop | monitor
+	long			st;		//start of sim
 	pthread_mutex_t	log_mutex;
 	pthread_mutex_t	stop_mutex;
 	t_dongle		*dongles;
