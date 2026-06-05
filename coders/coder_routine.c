@@ -15,6 +15,8 @@
 
 static void	compile(t_coder *cdr)
 {
+	if (is_stopped(cdr->sim))
+		return;
 	pthread_mutex_lock(&cdr->cmutex);
 	cdr->last_compile = get_time();
 	cdr->compile_count++;
@@ -26,6 +28,8 @@ static void	compile(t_coder *cdr)
 
 static void	post_compile(t_coder *cdr)
 {
+	if (is_stopped(cdr->sim))
+		return;
 	log_action(cdr->sim, cdr->id, "is debugging");
 	ft_sleep(cdr->sim->data[TT_DEBG], cdr->sim);
 	log_action(cdr->sim, cdr->id, "is refactoring");
@@ -52,7 +56,7 @@ void	*coder_routine(void *arg)
 	while (!is_stopped(cdr->sim))
 	{
 		if (!take_dongles(cdr))
-			break ;
+			break;
 		compile(cdr);
 		post_compile(cdr);
 	}

@@ -67,6 +67,7 @@ int	init_codex(t_sim *sim)
 	init_dongles(sim, n);
 	init_coders(sim, n);
 	i = 0;
+	// note : threads not created at the same time.
 	while (i < n)
 	{
 		pthread_create(&sim->coders[i].thread, NULL,
