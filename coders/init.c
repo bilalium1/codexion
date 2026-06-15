@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:06 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/26 13:07:52 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/06/15 00:08:59 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ static int	init_dongles(t_sim *sim, int n)
 		sim->dongles[i].available_at = 0;
 		sim->dongles[i].in_use = 0;
 		sim->dongles[i].size = 0;
+		sim->dongles[i].queue[0] = NULL;
+		sim->dongles[i].queue[1] = NULL;
 		i++;
 	}
 	return (1);
@@ -67,7 +69,6 @@ int	init_codex(t_sim *sim)
 	init_dongles(sim, n);
 	init_coders(sim, n);
 	i = 0;
-	// note : threads not created at the same time.
 	while (i < n)
 	{
 		pthread_create(&sim->coders[i].thread, NULL,

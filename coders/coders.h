@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:31:20 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/30 16:01:24 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/06/15 01:31:46 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,20 +29,26 @@
 # define CLDOWN		6
 # define SCH		7
 
-# define MAX_CDRS	256
-
-typedef struct s_waiter
-{
-	long	key;
-}	t_waiter;
-
+/*
+** t_dongle: shared U
+SB dongle.
+**
+** Each dongle has a queue of AT MOST 2 coders (its only two neighbours
+** can ever want it). No heap, no priority keys — the queue is kept
+** ordered at insertion time by request_dongle().
+**
+**   queue[0] = the coder currently entitled to take the dongle next
+**              (or currently holding it, if in_use == 1)
+**   queue[1] = the other neighbour, waiting behind queue[0]
+**   size     = 0, 1, or 2 -> how many of the two slots are occupied
+*/
 typedef struct s_dongle
 {
 	pthread_mutex_t	mutex;
 	pthread_cond_t	cond;
 	int				in_use;
 	long			available_at;
-	t_waiter		queue[2];
+	struct s_coder	*queue[2];
 	int				size;
 }	t_dongle;
 
@@ -60,9 +66,9 @@ typedef struct s_coder
 
 typedef struct s_sim
 {
-	int				*data; //array parsing
-	int				stop;	//stop | monitor
-	long			st;		//start of sim
+	int				*data;	/* parsed argv */
+	int				stop;	/* stop flag, guarded by stop_mutex */
+	long			st;		/* simulation start time */
 	pthread_mutex_t	log_mutex;
 	pthread_mutex_t	stop_mutex;
 	t_dongle		*dongles;
@@ -73,15 +79,6 @@ typedef struct s_sim
 int		*parser(int ac, char **av);
 int		init_codex(t_sim *sim);
 void	cleanup(t_sim *sim);
-
-/* heap */
-void	heap_push(t_dongle *d, t_waiter *w);
-void	heap_pop(t_dongle *d);
-void	heap_push_at(t_dongle *d, int i);
-
-/* scheduler */
-long	get_key(t_coder *cdr);
-int		acquire_dongle(t_dongle *d, t_coder *cdr, long key);
 
 /* dongle */
 int		take_dongles(t_coder *cdr);

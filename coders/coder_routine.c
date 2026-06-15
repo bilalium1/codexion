@@ -6,21 +6,23 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:52 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/26 12:50:35 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/06/15 00:09:10 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "coders.h"
-#include <pthread.h>
 
 static void	compile(t_coder *cdr)
 {
-	if (is_stopped(cdr->sim))
-		return;
 	pthread_mutex_lock(&cdr->cmutex);
 	cdr->last_compile = get_time();
 	cdr->compile_count++;
 	pthread_mutex_unlock(&cdr->cmutex);
+	if (is_stopped(cdr->sim))
+	{
+		cool_dongles(cdr);
+		return ;
+	}
 	log_action(cdr->sim, cdr->id, "is compiling");
 	ft_sleep(cdr->sim->data[TT_CMPL], cdr->sim);
 	cool_dongles(cdr);
@@ -29,9 +31,11 @@ static void	compile(t_coder *cdr)
 static void	post_compile(t_coder *cdr)
 {
 	if (is_stopped(cdr->sim))
-		return;
+		return ;
 	log_action(cdr->sim, cdr->id, "is debugging");
 	ft_sleep(cdr->sim->data[TT_DEBG], cdr->sim);
+	if (is_stopped(cdr->sim))
+		return ;
 	log_action(cdr->sim, cdr->id, "is refactoring");
 	ft_sleep(cdr->sim->data[TT_RFCT], cdr->sim);
 }
@@ -56,7 +60,7 @@ void	*coder_routine(void *arg)
 	while (!is_stopped(cdr->sim))
 	{
 		if (!take_dongles(cdr))
-			break;
+			break ;
 		compile(cdr);
 		post_compile(cdr);
 	}

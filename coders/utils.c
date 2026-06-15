@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "coders.h"
+#include <stdio.h>
 
 int	is_stopped(t_sim *sim)
 {
@@ -37,6 +38,7 @@ void	ft_sleep(long duration, t_sim *sim)
 	start = get_time();
 	while (!is_stopped(sim))
 	{
+		//printf("time : %ld\n", get_time() - start);
 		if (get_time() - start >= duration)
 			break ;
 		usleep(500);
