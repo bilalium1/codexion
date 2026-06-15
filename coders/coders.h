@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 08:31:20 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/06/15 01:31:46 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/06/15 01:39:51 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 
 /*
 ** t_dongle: shared U
-SB dongle.
+iSB dongle.
 **
 ** Each dongle has a queue of AT MOST 2 coders (its only two neighbours
 ** can ever want it). No heap, no priority keys — the queue is kept

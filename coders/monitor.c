@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:46:14 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/04/26 12:52:20 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/06/15 02:09:01 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	*monitor_routine(void *arg)
 			if (get_time() - last_comp > sim->data[TT_BRNT])
 			{
 				log_action(sim, sim->coders[i].id, "burned out");
-				set_stop(sim, 1);
+				set_stop(sim, 2);
 				return (NULL);
 			}
 			i++;

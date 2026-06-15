@@ -6,7 +6,7 @@
 /*   By: blemrabe <blemrabe@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/17 10:47:52 by blemrabe          #+#    #+#             */
-/*   Updated: 2026/06/15 00:09:10 by blemrabe         ###   ########.fr       */
+/*   Updated: 2026/06/15 02:12:08 by blemrabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ static void	compile(t_coder *cdr)
 
 static void	post_compile(t_coder *cdr)
 {
-	if (is_stopped(cdr->sim))
-		return ;
+	if (is_stopped(cdr->sim) == 2)
+		return;
 	log_action(cdr->sim, cdr->id, "is debugging");
 	ft_sleep(cdr->sim->data[TT_DEBG], cdr->sim);
-	if (is_stopped(cdr->sim))
-		return ;
+	if (is_stopped(cdr->sim) == 2)
+		return;
 	log_action(cdr->sim, cdr->id, "is refactoring");
 	ft_sleep(cdr->sim->data[TT_RFCT], cdr->sim);
 }
