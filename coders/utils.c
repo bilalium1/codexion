@@ -56,7 +56,7 @@ const char *get_color(char *msg)
 	if (!strcmp(msg, "has taken a dongle"))
 		return "\033[48;2;80;0;80m";     // magenta bg
 	if (!strcmp(msg, "burned out"))
-	    return "\033[80;2;150;0;80m";
+		return "\033[48;2;200;0;80m";     // magenta bg
 	return "\033[0m"; // default
 }
 
