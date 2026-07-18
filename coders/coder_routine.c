@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "coders.h"
+#include <pthread.h>
 
 static void	compile(t_coder *cdr)
 {
@@ -47,17 +48,32 @@ static void	*handle_single(t_coder *cdr)
 	return (NULL);
 }
 
+static int done_compiling(t_coder *cdr)
+{
+    int compiles = 0;
+    pthread_mutex_lock(&cdr->cmutex);
+    compiles = cdr->compile_count;
+    pthread_mutex_unlock(&cdr->cmutex);
+    return (compiles >= cdr->sim->data[REQ_CMP]);
+}
+
 void	*coder_routine(void *arg)
 {
 	t_coder	*cdr;
 
 	cdr = (t_coder *)arg;
+	int compiles = 0;
 	pthread_mutex_lock(&cdr->cmutex);
 	cdr->last_compile = get_time();
+	compiles = cdr->compile_count;
 	pthread_mutex_unlock(&cdr->cmutex);
 	if (cdr->sim->data[NBR_CDRS] == 1)
 		return (handle_single(cdr));
-	while (!is_stopped(cdr->sim))
+	if (compiles >= cdr->sim->data[REQ_CMP])
+	{
+        log_action(cdr->sim, cdr->id, "FINISHED 2");
+	}
+	while (!is_stopped(cdr->sim) && !done_compiling(cdr))
 	{
 		if (!take_dongles(cdr))
 			break ;

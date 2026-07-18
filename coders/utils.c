@@ -45,9 +45,33 @@ void	ft_sleep(long duration, t_sim *sim)
 	}
 }
 
+const char *get_color(char *msg)
+{
+	if (!strcmp(msg, "is debugging"))
+		return "\033[48;2;0;0;80m";       // blue bg
+	if (!strcmp(msg, "is compiling"))
+		return "\033[48;2;0;80;0m";       // green bg
+	if (!strcmp(msg, "is refactoring"))
+		return "\033[48;2;80;80;0m";     // yellow bg
+	if (!strcmp(msg, "has taken a dongle"))
+		return "\033[48;2;80;0;80m";     // magenta bg
+	if (!strcmp(msg, "burned out"))
+	    return "\033[80;2;150;0;80m";
+	return "\033[0m"; // default
+}
+
 void	log_action(t_sim *sim, int id, char *msg)
 {
 	pthread_mutex_lock(&sim->log_mutex);
-	printf("%ld %d %s\033[0m\n", get_time() - sim->st, id + 1, msg);
+
+	const char *color = get_color(msg);
+
+	printf("%s%ld | %d %s\033[0m\n",
+		color,
+		get_time() - sim->st,
+		id + 1,
+		msg
+	);
+
 	pthread_mutex_unlock(&sim->log_mutex);
 }
