@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "coders.h"
-#include <stdio.h>
 
 /*
 This file has the main program, this program uses all the other files

@@ -38,8 +38,6 @@ static int	init_coders(t_sim *sim, int n)
 	i = 0;
 	while (i < n)
 	{
-		if (i % 2 == 0)
-			usleep(500);
 		sim->coders[i].id = i;
 		sim->coders[i].compile_count = 0;
 		sim->coders[i].last_compile = sim->st;
@@ -75,6 +73,5 @@ int	init_codex(t_sim *sim)
 			coder_routine, &sim->coders[i]);
 		i++;
 	}
-	usleep(1000);
 	return (1);
 }

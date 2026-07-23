@@ -6,13 +6,13 @@ import pygame
 import math
 
 # --- 1. ARGUMENTS CONFIGURATION ---
-CDRS = 5
-BRN = 100
-TC = 100
-TD = 100
-TR = 100
-RQC = 2
-CLDWN = 0
+CDRS = 7
+BRN = 5000
+TC = 10
+TD = 0
+TR = 0
+RQC = 10
+CLDWN = 100
 SCH = "fifo"
 
 ARGS = [CDRS, BRN, TC, TD, TR, RQC, CLDWN, SCH]
@@ -89,25 +89,43 @@ def get_state_details(state_text):
         return {"color": C_IDLE, "label": "IDLE", "fill": 0, "tag": "idle"}
 
 def precompute_history(events, num_coders):
+    """Groups logs by distinct timestamp to turn every tick into a standalone step."""
+    if not events:
+        return []
+
+    # 1. Group events sharing the exact same millisecond timestamp
+    from collections import defaultdict
+    timestamp_batches = defaultdict(list)
+    for ev in events:
+        timestamp_batches[ev["time"]].append(ev)
+
+    sorted_timestamps = sorted(timestamp_batches.keys())
+
     history = []
     curr_coder_states = {i: "IDLE" for i in range(1, num_coders + 1)}
     coder_dongle_counts = {i: 0 for i in range(1, num_coders + 1)}
 
-    for ev in events:
-        c_id = ev["coder_id"]
-        state = ev["state"]
+    # 2. Process chronological batches sequentially
+    for ts in sorted_timestamps:
+        batch = timestamp_batches[ts]
+        raw_logs_combined = []
 
-        if "has taken a dongle" in state.lower():
-            coder_dongle_counts[c_id] = min(2, coder_dongle_counts[c_id] + 1)
-            curr_coder_states[c_id] = "has taken a dongle"
-        elif "compiling" in state.lower():
-            curr_coder_states[c_id] = "is compiling"
-        elif "debugging" in state.lower() or "refactoring" in state.lower():
-            coder_dongle_counts[c_id] = 0
-            curr_coder_states[c_id] = state
-        elif "burnt out" in state.lower() or "burned out" in state.lower():
-            coder_dongle_counts[c_id] = 0
-            curr_coder_states[c_id] = "burnt out"
+        for ev in batch:
+            c_id = ev["coder_id"]
+            state = ev["state"]
+            raw_logs_combined.append(ev["raw"])
+
+            if "has taken a dongle" in state.lower():
+                coder_dongle_counts[c_id] = min(2, coder_dongle_counts[c_id] + 1)
+                curr_coder_states[c_id] = "has taken a dongle"
+            elif "compiling" in state.lower():
+                curr_coder_states[c_id] = "is compiling"
+            elif "debugging" in state.lower() or "refactoring" in state.lower():
+                coder_dongle_counts[c_id] = 0
+                curr_coder_states[c_id] = state
+            elif "burnt out" in state.lower() or "burned out" in state.lower():
+                coder_dongle_counts[c_id] = 0
+                curr_coder_states[c_id] = "burnt out"
 
         dongle_occupancy = [False] * num_coders
         active_links = []
@@ -115,7 +133,7 @@ def precompute_history(events, num_coders):
         for idx in range(1, num_coders + 1):
             d_count = coder_dongle_counts[idx]
             left_d = idx - 1
-            right_d = (idx - 2) % num_coders
+            right_d = idx % num_coders
 
             if d_count >= 1:
                 dongle_occupancy[left_d] = True
@@ -124,12 +142,15 @@ def precompute_history(events, num_coders):
                 dongle_occupancy[right_d] = True
                 active_links.append((idx, right_d))
 
+        # Join overlapping actions with semicolons for neat bottom status layout box text
+        summary_log = " | ".join(raw_logs_combined)
+
         history.append({
-            "time": ev["time"],
+            "time": ts,
             "coder_states": curr_coder_states.copy(),
             "dongle_states": dongle_occupancy.copy(),
             "links": list(active_links),
-            "raw": ev["raw"]
+            "raw": summary_log
         })
 
     return history
@@ -153,7 +174,7 @@ def main():
     f_big   = pygame.font.SysFont("Arial", 24, bold=True)
     f_mid   = pygame.font.SysFont("Arial", 16, bold=True)
     f_small = pygame.font.SysFont("Arial", 12, bold=True)
-    f_log   = pygame.font.SysFont("Courier New", 18, bold=True)
+    f_log   = pygame.font.SysFont("Courier New", 14, bold=True) # Shrink size slightly for batch logs
 
     step_idx = -1
     CX, CY = WIDTH // 2, HEIGHT // 2
@@ -191,7 +212,7 @@ def main():
             "coder_states": {i: "IDLE" for i in range(1, CDRS + 1)},
             "dongle_states": [False] * CDRS,
             "links": [],
-            "raw": "[Press RIGHT ARROW to begin timeline simulation]"
+            "raw": "[Press RIGHT ARROW to jump to the first timestamp]"
         }
 
         # 1. BIG CENTER TIMESTAMP TEXT DISPLAY
@@ -236,14 +257,20 @@ def main():
         title_surf = f_big.render("CODEXION CONCURRENCY SIMULATION", True, C_WHITE)
         screen.blit(title_surf, (CX - title_surf.get_width() // 2, 25))
 
-        info_str = f"Step: {step_idx + 1} / {total_steps}  |  Controls: [<-] Backwards  [->] Forwards"
+        info_str = f"Timestamp Step: {step_idx + 1} / {total_steps}  |  Controls: [<-] Previous Time  [->] Next Time"
         info_surf = f_small.render(info_str, True, C_DONGLE_IDLE)
         screen.blit(info_surf, (CX - info_surf.get_width() // 2, 60))
 
-        # Bottom Action Status Box
+        # Bottom Action Status Box (Handles wide combined text gracefully)
         pygame.draw.rect(screen, C_BLACK, (40, HEIGHT - 90, WIDTH - 80, 60), border_radius=8)
-        log_surf = f_log.render(f">> {current_step_data['raw']}", True, C_TEXT_LINE)
-        screen.blit(log_surf, (60, HEIGHT - 72))
+
+        # Crop string if it leaks out of layout bounding lines
+        display_log = f">> {current_step_data['raw']}"
+        if len(display_log) > 105:
+            display_log = display_log[:102] + "..."
+
+        log_surf = f_log.render(display_log, True, C_TEXT_LINE)
+        screen.blit(log_surf, (60, HEIGHT - 70))
 
         pygame.display.flip()
         clock.tick(FPS)
