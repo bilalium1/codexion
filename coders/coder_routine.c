@@ -32,11 +32,11 @@ static void	compile(t_coder *cdr)
 static void	post_compile(t_coder *cdr)
 {
 	if (is_stopped(cdr->sim) == 2)
-		return;
+		return ;
 	log_action(cdr->sim, cdr->id, "is debugging");
 	ft_sleep(cdr->sim->data[TT_DEBG], cdr->sim);
 	if (is_stopped(cdr->sim) == 2)
-		return;
+		return ;
 	log_action(cdr->sim, cdr->id, "is refactoring");
 	ft_sleep(cdr->sim->data[TT_RFCT], cdr->sim);
 }
@@ -48,21 +48,22 @@ static void	*handle_single(t_coder *cdr)
 	return (NULL);
 }
 
-static int done_compiling(t_coder *cdr)
+static int	done_compiling(t_coder *cdr)
 {
-    int compiles = 0;
-    pthread_mutex_lock(&cdr->cmutex);
-    compiles = cdr->compile_count;
-    pthread_mutex_unlock(&cdr->cmutex);
-    return (compiles >= cdr->sim->data[REQ_CMP]);
+	int	compiles;
+
+	pthread_mutex_lock(&cdr->cmutex);
+	compiles = cdr->compile_count;
+	pthread_mutex_unlock(&cdr->cmutex);
+	return (compiles >= cdr->sim->data[REQ_CMP]);
 }
 
 void	*coder_routine(void *arg)
 {
 	t_coder	*cdr;
+	int		compiles;
 
 	cdr = (t_coder *)arg;
-	int compiles = 0;
 	pthread_mutex_lock(&cdr->cmutex);
 	cdr->last_compile = get_time();
 	compiles = cdr->compile_count;
@@ -71,7 +72,7 @@ void	*coder_routine(void *arg)
 		return (handle_single(cdr));
 	if (compiles >= cdr->sim->data[REQ_CMP])
 	{
-        log_action(cdr->sim, cdr->id, "FINISHED 2");
+		log_action(cdr->sim, cdr->id, "FINISHED 2");
 	}
 	while (!is_stopped(cdr->sim) && !done_compiling(cdr))
 	{

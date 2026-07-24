@@ -68,16 +68,12 @@ void	*monitor_routine(void *arg)
 			if (get_time() - last_comp > sim->data[TT_BRNT])
 			{
 				log_action(sim, sim->coders[i].id, "burned out");
-				set_stop(sim, 2);
-				return (NULL);
+				return (set_stop(sim, 2), NULL);
 			}
 			i++;
 		}
 		if (all_complete(sim))
-		{
-			set_stop(sim, 1);
-			return (NULL);
-		}
+			return (set_stop(sim, 1), NULL);
 		usleep(500);
 	}
 }

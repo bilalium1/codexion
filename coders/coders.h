@@ -29,19 +29,6 @@
 # define CLDOWN		6
 # define SCH		7
 
-/*
-** t_dongle: shared U
-iSB dongle.
-**
-** Each dongle has a queue of AT MOST 2 coders (its only two neighbours
-** can ever want it). No heap, no priority keys — the queue is kept
-** ordered at insertion time by request_dongle().
-**
-**   queue[0] = the coder currently entitled to take the dongle next
-**              (or currently holding it, if in_use == 1)
-**   queue[1] = the other neighbour, waiting behind queue[0]
-**   size     = 0, 1, or 2 -> how many of the two slots are occupied
-*/
 typedef struct s_dongle
 {
 	pthread_mutex_t	mutex;
@@ -83,6 +70,7 @@ void	cleanup(t_sim *sim);
 /* dongle */
 int		take_dongles(t_coder *cdr);
 void	cool_dongles(t_coder *cdr);
+int	request_dongle(t_dongle *d, t_coder *cdr);
 
 /* threads */
 void	*coder_routine(void *arg);

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "coders.h"
-#include <stdio.h>
 
 int	is_stopped(t_sim *sim)
 {
@@ -38,40 +37,37 @@ void	ft_sleep(long duration, t_sim *sim)
 	start = get_time();
 	while (!is_stopped(sim))
 	{
-		//printf("time : %ld\n", get_time() - start);
 		if (get_time() - start >= duration)
 			break ;
 		usleep(500);
 	}
 }
 
-const char *get_color(char *msg)
+const char	*get_color(char *msg)
 {
 	if (!strcmp(msg, "is debugging"))
-		return "\033[48;2;0;0;80m";       // blue bg
+		return ("\033[48;2;0;0;80m");
 	if (!strcmp(msg, "is compiling"))
-		return "\033[48;2;0;80;0m";       // green bg
+		return ("\033[48;2;0;80;0m");
 	if (!strcmp(msg, "is refactoring"))
-		return "\033[48;2;80;80;0m";     // yellow bg
+		return ("\033[48;2;80;80;0m");
 	if (!strcmp(msg, "has taken a dongle"))
-		return "\033[48;2;80;0;80m";     // magenta bg
+		return ("\033[48;2;80;0;80m");
 	if (!strcmp(msg, "burned out"))
-		return "\033[48;2;200;0;80m";     // magenta bg
-	return "\033[0m"; // default
+		return ("\033[48;2;200;0;80m");
+	return ("\033[0m");
 }
 
 void	log_action(t_sim *sim, int id, char *msg)
 {
+	const char	*color;
+
 	pthread_mutex_lock(&sim->log_mutex);
-
-	const char *color = get_color(msg);
-
+	color = get_color(msg);
 	printf("%s%ld | %d %s\033[0m\n",
 		color,
 		get_time() - sim->st,
 		id + 1,
-		msg
-	);
-
+		msg);
 	pthread_mutex_unlock(&sim->log_mutex);
 }
