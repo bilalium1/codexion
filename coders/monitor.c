@@ -54,7 +54,6 @@ void	*monitor_routine(void *arg)
 {
 	t_sim	*sim;
 	int		i;
-	int		count;
 	long	last_comp;
 
 	sim = (t_sim *)arg;
@@ -65,18 +64,20 @@ void	*monitor_routine(void *arg)
 		{
 			pthread_mutex_lock(&sim->coders[i].cmutex);
 			last_comp = sim->coders[i].last_compile;
-			count = sim->coders[i].compile_count;
 			pthread_mutex_unlock(&sim->coders[i].cmutex);
-			if (count < sim->data[REQ_CMP]
-				&& get_time() - last_comp > sim->data[TT_BRNT])
+			if (get_time() - last_comp > sim->data[TT_BRNT])
 			{
 				log_action(sim, sim->coders[i].id, "burned out");
-				return (set_stop(sim, 2), NULL);
+				set_stop(sim, 2);
+				return (NULL);
 			}
 			i++;
 		}
 		if (all_complete(sim))
-			return (set_stop(sim, 1), NULL);
+		{
+			set_stop(sim, 1);
+			return (NULL);
+		}
 		usleep(500);
 	}
 }

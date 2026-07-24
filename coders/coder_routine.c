@@ -80,8 +80,5 @@ void	*coder_routine(void *arg)
 		compile(cdr);
 		post_compile(cdr);
 	}
-	pthread_mutex_lock(&cdr->cmutex);
-	cdr->last_compile = get_time();
-	pthread_mutex_unlock(&cdr->cmutex);
 	return (NULL);
 }

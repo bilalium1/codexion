@@ -6,13 +6,13 @@ import pygame
 import math
 
 # --- 1. ARGUMENTS CONFIGURATION ---
-CDRS = 7
+CDRS = 100
 BRN = 5000
 TC = 10
 TD = 0
 TR = 0
 RQC = 10
-CLDWN = 100
+CLDWN = 0
 SCH = "fifo"
 
 ARGS = [CDRS, BRN, TC, TD, TR, RQC, CLDWN, SCH]
