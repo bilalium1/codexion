@@ -6,7 +6,7 @@ import pygame
 import math
 
 # --- 1. ARGUMENTS CONFIGURATION ---
-CDRS = 100
+CDRS = 10
 BRN = 5000
 TC = 10
 TD = 0

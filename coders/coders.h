@@ -70,7 +70,7 @@ void	cleanup(t_sim *sim);
 /* dongle */
 int		take_dongles(t_coder *cdr);
 void	cool_dongles(t_coder *cdr);
-int	request_dongle(t_dongle *d, t_coder *cdr);
+int		request_dongle(t_dongle *d, t_coder *cdr);
 
 /* threads */
 void	*coder_routine(void *arg);

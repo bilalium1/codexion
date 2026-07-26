@@ -50,28 +50,39 @@ static void	set_stop(t_sim *sim, int value)
 	}
 }
 
+static int	check_burnout(t_sim *sim)
+{
+	int		i;
+	int		count;
+	long	last_comp;
+
+	i = 0;
+	while (i < sim->data[NBR_CDRS])
+	{
+		pthread_mutex_lock(&sim->coders[i].cmutex);
+		last_comp = sim->coders[i].last_compile;
+		count = sim->coders[i].compile_count;
+		pthread_mutex_unlock(&sim->coders[i].cmutex);
+		if (count < sim->data[REQ_CMP]
+			&& get_time() - last_comp > sim->data[TT_BRNT])
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
 void	*monitor_routine(void *arg)
 {
 	t_sim	*sim;
-	int		i;
-	long	last_comp;
+	int		burned;
 
 	sim = (t_sim *)arg;
 	while (1)
 	{
-		i = 0;
-		while (i < sim->data[NBR_CDRS])
-		{
-			pthread_mutex_lock(&sim->coders[i].cmutex);
-			last_comp = sim->coders[i].last_compile;
-			pthread_mutex_unlock(&sim->coders[i].cmutex);
-			if (get_time() - last_comp > sim->data[TT_BRNT])
-			{
-				log_action(sim, sim->coders[i].id, "burned out");
-				return (set_stop(sim, 2), NULL);
-			}
-			i++;
-		}
+		burned = check_burnout(sim);
+		if (burned >= 0)
+			return (log_action(sim, sim->coders[burned].id,
+					"burned out"), set_stop(sim, 2), NULL);
 		if (all_complete(sim))
 			return (set_stop(sim, 1), NULL);
 		usleep(500);
