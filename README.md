@@ -2,6 +2,10 @@
 
 > This project has been created as part of 42 curriculum by blemrabe
 
+![cat](https://media1.tenor.com/m/qMH5o_XizbcAAAAd/but-here%27s-the-coder.gif)
+
+this is what the coders look like btw ^^
+
 ### Description
 
 Codexion simulates multiple coders sitting in a circular co-working hub, competing for shared USB dongles to compile their code. Each coder cycles through three phases: compile, debug, and refactor. Compiling requires holding two dongles simultaneously — the one on their left and the one on their right in the ring.
