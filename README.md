@@ -57,6 +57,6 @@ make
 
 Thank you for reading!
 
-![sonic](sonic_waiting.gif)
+![sonic](.sonic.gif)
 
 Made by b//
