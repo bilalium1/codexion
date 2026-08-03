@@ -70,10 +70,6 @@ void	*coder_routine(void *arg)
 	pthread_mutex_unlock(&cdr->cmutex);
 	if (cdr->sim->data[NBR_CDRS] == 1)
 		return (handle_single(cdr));
-	if (compiles >= cdr->sim->data[REQ_CMP])
-	{
-		log_action(cdr->sim, cdr->id, "FINISHED 2");
-	}
 	while (!is_stopped(cdr->sim) && !done_compiling(cdr))
 	{
 		if (!take_dongles(cdr))

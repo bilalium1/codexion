@@ -51,7 +51,7 @@ const char	*get_color(char *msg)
 		return ("\033[48;2;0;80;0m");
 	if (!strcmp(msg, "is refactoring"))
 		return ("\033[48;2;80;80;0m");
-	if (!strcmp(msg, "has taken a dongle"))
+	if (!strcmp(msg, "has taken two dongles"))
 		return ("\033[48;2;80;0;80m");
 	if (!strcmp(msg, "burned out"))
 		return ("\033[48;2;200;0;80m");
@@ -64,7 +64,7 @@ void	log_action(t_sim *sim, int id, char *msg)
 
 	pthread_mutex_lock(&sim->log_mutex);
 	color = get_color(msg);
-	printf("%s%ld | %d %s\033[0m\n",
+	printf("%s%03ld | %d %s\033[0m\n",
 		color,
 		get_time() - sim->st,
 		id + 1,

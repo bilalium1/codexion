@@ -41,8 +41,7 @@ int	take_dongles(t_coder *cdr)
 		return (release_dongle(first, cdr->sim->data[CLDOWN]), 0);
 	pthread_mutex_unlock(&first->mutex);
 	pthread_mutex_unlock(&second->mutex);
-	log_action(cdr->sim, cdr->id, "has taken a dongle");
-	log_action(cdr->sim, cdr->id, "has taken a dongle");
+	log_action(cdr->sim, cdr->id, "has taken two dongles");
 	return (1);
 }
 
